@@ -41,7 +41,8 @@ The application delegate that sets up and starts the virtual machine.
         abortWithErrorMessage([NSString stringWithFormat:@"Missing Virtual Machine Bundle at %@. Run InstallationTool first to create it.", getVMBundlePath()]);
     }
 
-    // Retrieve the hardware model; you should save this value to disk during installation.
+    // Retrieve the hardware model; you should save this value to disk
+    // during installation.
     NSData *hardwareModelData = [[NSData alloc] initWithContentsOfURL:getHardwareModelURL()];
     if (!hardwareModelData) {
         abortWithErrorMessage(@"Failed to retrieve hardware model data.");
@@ -53,11 +54,12 @@ The application delegate that sets up and starts the virtual machine.
     }
 
     if (!hardwareModel.supported) {
-        abortWithErrorMessage(@"The hardware model is not supported on the current host");
+        abortWithErrorMessage(@"The hardware model isn't supported on the current host");
     }
     macPlatformConfiguration.hardwareModel = hardwareModel;
 
-    // Retrieve the machine identifier; you should save this value to disk during installation.
+    // Retrieve the machine identifier; you should save this value to disk
+    // during installation.
     NSData *machineIdentifierData = [[NSData alloc] initWithContentsOfURL:getMachineIdentifierURL()];
     if (!machineIdentifierData) {
         abortWithErrorMessage(@"Failed to retrieve machine identifier data.");
@@ -100,13 +102,13 @@ The application delegate that sets up and starts the virtual machine.
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
 {
 #ifdef __arm64__
-    [self createVirtualMachine];
-
-    _delegate = [MacOSVirtualMachineDelegate new];
-    _virtualMachine.delegate = _delegate;
-    _virtualMachineView.virtualMachine = _virtualMachine;
-
     dispatch_async(dispatch_get_main_queue(), ^{
+        [self createVirtualMachine];
+
+        self->_delegate = [MacOSVirtualMachineDelegate new];
+        self->_virtualMachine.delegate = self->_delegate;
+        self->_virtualMachineView.virtualMachine = self->_virtualMachine;
+
         [self->_virtualMachine startWithCompletionHandler:^(NSError * _Nullable error) {
             if (error) {
                 abortWithErrorMessage(error.localizedDescription);

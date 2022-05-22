@@ -125,20 +125,18 @@ static void createDiskImage()
 
 - (void)startInstallationWithRestoreImageFileURL:(NSURL *)restoreImageFileURL
 {
-    dispatch_async(dispatch_get_main_queue(), ^{
-        VZMacOSInstaller *installer = [[VZMacOSInstaller alloc] initWithVirtualMachine:self->_virtualMachine restoreImageURL:restoreImageFileURL];
+    VZMacOSInstaller *installer = [[VZMacOSInstaller alloc] initWithVirtualMachine:self->_virtualMachine restoreImageURL:restoreImageFileURL];
 
-        NSLog(@"Starting installation.");
-        [installer installWithCompletionHandler:^(NSError *error) {
-            if (error) {
-                abortWithErrorMessage([NSString stringWithFormat:@"%@", error.localizedDescription]);
-            } else {
-                NSLog(@"Installation succeeded.");
-            }
-        }];
+    NSLog(@"Starting installation.");
+    [installer installWithCompletionHandler:^(NSError *error) {
+        if (error) {
+            abortWithErrorMessage([NSString stringWithFormat:@"%@", error.localizedDescription]);
+        } else {
+            NSLog(@"Installation succeeded.");
+        }
+    }];
 
-        [installer.progress addObserver:self forKeyPath:@"fractionCompleted" options:NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew context:nil];
-    });
+    [installer.progress addObserver:self forKeyPath:@"fractionCompleted" options:NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew context:nil];
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
@@ -155,7 +153,8 @@ static void createDiskImage()
 
 // MARK: - Public methods.
 
-// Create a bundle on the user's Home directory to store any artifacts that will be produced by installation.
+// Create a bundle on the user's Home directory to store any artifacts that
+// will be produced by installation.
 - (void)setUpVirtualMachineArtifacts
 {
     createVMBundle();
@@ -176,8 +175,10 @@ static void createDiskImage()
             abortWithErrorMessage(@"No supported Mac configuration.");
         }
 
-        [self setupVirtualMachineWithMacOSConfigurationRequirements:macOSConfiguration];
-        [self startInstallationWithRestoreImageFileURL:ipswURL];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self setupVirtualMachineWithMacOSConfigurationRequirements:macOSConfiguration];
+            [self startInstallationWithRestoreImageFileURL:ipswURL];
+        });
     }];
 }
 

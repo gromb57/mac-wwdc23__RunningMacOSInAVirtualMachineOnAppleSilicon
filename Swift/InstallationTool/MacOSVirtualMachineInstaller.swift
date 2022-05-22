@@ -14,7 +14,8 @@ class MacOSVirtualMachineInstaller: NSObject {
     private var virtualMachine: VZVirtualMachine!
     private var virtualMachineResponder: MacOSVirtualMachineDelegate?
 
-    // Create a bundle on the user's home directory to store any artifacts that will be produced by installation.
+    // Create a bundle on the user's home directory to store any artifacts
+    // that will be produced by installation.
     public func setUpVirtualMachineArtifacts() {
         createVMBundle()
     }
@@ -42,11 +43,13 @@ class MacOSVirtualMachineInstaller: NSObject {
         }
 
         if !macOSConfiguration.hardwareModel.isSupported {
-            fatalError("macOSConfiguration configuration is not supported on the current host.")
+            fatalError("macOSConfiguration configuration isn't supported on the current host.")
         }
 
-        setupVirtualMachine(macOSConfiguration: macOSConfiguration)
-        startInstallation(restoreImageURL: restoreImage.url)
+        DispatchQueue.main.async { [self] in
+            setupVirtualMachine(macOSConfiguration: macOSConfiguration)
+            startInstallation(restoreImageURL: restoreImage.url)
+        }
     }
 
     // MARK: Create the Mac Platform Configuration
@@ -63,7 +66,8 @@ class MacOSVirtualMachineInstaller: NSObject {
         macPlatformConfiguration.hardwareModel = macOSConfiguration.hardwareModel
         macPlatformConfiguration.machineIdentifier = VZMacMachineIdentifier()
 
-        // Store the hardware model and machine identifier to disk so that we can retrieve them for subsequent boots.
+        // Store the hardware model and machine identifier to disk so that we
+        // can retrieve them for subsequent boots.
         try! macPlatformConfiguration.hardwareModel.dataRepresentation.write(to: hardwareModelURL)
         try! macPlatformConfiguration.machineIdentifier.dataRepresentation.write(to: machineIdentifierURL)
 
@@ -78,12 +82,12 @@ class MacOSVirtualMachineInstaller: NSObject {
         virtualMachineConfiguration.platform = createMacPlatformConfiguration(macOSConfiguration: macOSConfiguration)
         virtualMachineConfiguration.cpuCount = MacOSVirtualMachineConfigurationHelper.computeCPUCount()
         if virtualMachineConfiguration.cpuCount < macOSConfiguration.minimumSupportedCPUCount {
-            fatalError("CPUCount is not supported by the macOS configuration.")
+            fatalError("CPUCount isn't supported by the macOS configuration.")
         }
 
         virtualMachineConfiguration.memorySize = MacOSVirtualMachineConfigurationHelper.computeMemorySize()
         if virtualMachineConfiguration.memorySize < macOSConfiguration.minimumSupportedMemorySize {
-            fatalError("memorySize is not supported by the macOS configuration.")
+            fatalError("memorySize isn't supported by the macOS configuration.")
         }
 
         // Create a 64 GB disk image.
@@ -107,22 +111,20 @@ class MacOSVirtualMachineInstaller: NSObject {
     // MARK: Begin macOS installation
 
     private func startInstallation(restoreImageURL: URL) {
-        DispatchQueue.main.async { [self] in
-            let installer = VZMacOSInstaller(virtualMachine: virtualMachine, restoringFromImageAt: restoreImageURL)
+        let installer = VZMacOSInstaller(virtualMachine: virtualMachine, restoringFromImageAt: restoreImageURL)
 
-            NSLog("Starting installation.")
-            installer.install(completionHandler: { (result: Result<Void, Error>) in
-                if case let .failure(error) = result {
-                    fatalError(error.localizedDescription)
-                } else {
-                    NSLog("Installation succeeded.")
-                }
-            })
-
-            // Observe installation progress
-            installationObserver = installer.progress.observe(\.fractionCompleted, options: [.initial, .new]) { (progress, change) in
-                NSLog("Installation progress: \(change.newValue! * 100).")
+        NSLog("Starting installation.")
+        installer.install(completionHandler: { (result: Result<Void, Error>) in
+            if case let .failure(error) = result {
+                fatalError(error.localizedDescription)
+            } else {
+                NSLog("Installation succeeded.")
             }
+        })
+
+        // Observe installation progress
+        installationObserver = installer.progress.observe(\.fractionCompleted, options: [.initial, .new]) { (progress, change) in
+            NSLog("Installation progress: \(change.newValue! * 100).")
         }
     }
 
@@ -141,7 +143,7 @@ class MacOSVirtualMachineInstaller: NSObject {
         }
     }
 
-    // Create an empty disk image for the Virtual Machine
+    // Create an empty disk image for the Virtual Machine.
     private func createDiskImage() {
         let diskFd = open(diskImagePath, O_RDWR | O_CREAT, S_IRUSR | S_IWUSR)
         if diskFd == -1 {

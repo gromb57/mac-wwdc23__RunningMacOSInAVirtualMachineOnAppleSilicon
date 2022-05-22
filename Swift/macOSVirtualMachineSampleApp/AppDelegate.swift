@@ -33,7 +33,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             fatalError("Missing Virtual Machine Bundle at \(vmBundlePath). Run InstallationTool first to create it.")
         }
 
-        // Retrieve the hardware model; you should save this value to disk during installation.
+        // Retrieve the hardware model; you should save this value to disk
+        // during installation.
         guard let hardwareModelData = try? Data(contentsOf: hardwareModelURL) else {
             fatalError("Failed to retrieve hardware model data.")
         }
@@ -43,11 +44,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         }
 
         if !hardwareModel.isSupported {
-            fatalError("The hardware model is not supported on the current host")
+            fatalError("The hardware model isn't supported on the current host")
         }
         macPlatform.hardwareModel = hardwareModel
 
-        // Retrieve the machine identifier; you should save this value to disk during installation.
+        // Retrieve the machine identifier; you should save this value to disk
+        // during installation.
         guard let machineIdentifierData = try? Data(contentsOf: machineIdentifierURL) else {
             fatalError("Failed to retrieve machine identifier data.")
         }
@@ -86,19 +88,21 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     func applicationDidFinishLaunching(_ aNotification: Notification) {
 #if arch(arm64)
-        createVirtualMachine()
-        virtualMachineResponder = MacOSVirtualMachineDelegate()
-        virtualMachine.delegate = virtualMachineResponder
-        virtualMachineView.virtualMachine = virtualMachine
-        virtualMachine.start(completionHandler: { (result) in
-            switch result {
-                case let .failure(error):
-                    fatalError("Virtual machine failed to start \(error)")
+        DispatchQueue.main.async { [self] in
+            createVirtualMachine()
+            virtualMachineResponder = MacOSVirtualMachineDelegate()
+            virtualMachine.delegate = virtualMachineResponder
+            virtualMachineView.virtualMachine = virtualMachine
+            virtualMachine.start(completionHandler: { (result) in
+                switch result {
+                    case let .failure(error):
+                        fatalError("Virtual machine failed to start \(error)")
 
-                default:
-                    NSLog("Virtual machine successfully started.")
-            }
-        })
+                    default:
+                        NSLog("Virtual machine successfully started.")
+                }
+            })
+        }
 #endif
     }
 
