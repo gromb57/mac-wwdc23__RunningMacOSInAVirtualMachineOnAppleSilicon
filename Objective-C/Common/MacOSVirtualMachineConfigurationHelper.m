@@ -1,8 +1,8 @@
 /*
-See LICENSE folder for this sample’s licensing information.
+See the LICENSE.txt file for this sample’s licensing information.
 
 Abstract:
-Helper that creates various configuration objects exposed in the `VZVirtualMachineConfiguration`.
+The helper that creates various configuration objects exposed in the `VZVirtualMachineConfiguration`.
 */
 
 #import "MacOSVirtualMachineConfigurationHelper.h"
@@ -26,7 +26,7 @@ Helper that creates various configuration objects exposed in the `VZVirtualMachi
 
 + (uint64_t)computeMemorySize
 {
-    // We arbitrarily choose 4GB.
+    // Set the amount of system memory to 4 GB; this is a baseline value that you can change depending on your use case.
     uint64_t memorySize = 4ull * 1024ull * 1024ull * 1024ull;
     memorySize = MAX(memorySize, VZVirtualMachineConfiguration.minimumAllowedMemorySize);
     memorySize = MIN(memorySize, VZVirtualMachineConfiguration.maximumAllowedMemorySize);
@@ -43,7 +43,7 @@ Helper that creates various configuration objects exposed in the `VZVirtualMachi
 {
     VZMacGraphicsDeviceConfiguration *graphicsConfiguration = [[VZMacGraphicsDeviceConfiguration alloc] init];
     graphicsConfiguration.displays = @[
-        // We abitrarily choose the resolution of the display to be 1920 x 1200.
+        // The system arbitrarily chooses the resolution of the display to be 1920 x 1200.
         [[VZMacGraphicsDisplayConfiguration alloc] initWithWidthInPixels:1920 heightInPixels:1200 pixelsPerInch:80],
     ];
 
@@ -64,36 +64,27 @@ Helper that creates various configuration objects exposed in the `VZVirtualMachi
 
 + (VZVirtioNetworkDeviceConfiguration *)createNetworkDeviceConfiguration
 {
-    VZNATNetworkDeviceAttachment *natAttachment = [[VZNATNetworkDeviceAttachment alloc] init];
     VZVirtioNetworkDeviceConfiguration *networkConfiguration = [[VZVirtioNetworkDeviceConfiguration alloc] init];
+    networkConfiguration.MACAddress = [[VZMACAddress alloc] initWithString:@"d6:a7:58:8e:78:d5"];
+
+    VZNATNetworkDeviceAttachment *natAttachment = [[VZNATNetworkDeviceAttachment alloc] init];
     networkConfiguration.attachment = natAttachment;
 
     return networkConfiguration;
 }
 
-+ (VZUSBScreenCoordinatePointingDeviceConfiguration *)createPointingDeviceConfiguration
++ (VZPointingDeviceConfiguration *)createPointingDeviceConfiguration
 {
-    return [[VZUSBScreenCoordinatePointingDeviceConfiguration alloc] init];
+    return [[VZMacTrackpadConfiguration alloc] init];
 }
 
-+ (VZUSBKeyboardConfiguration *)createKeyboardConfiguration
++ (VZKeyboardConfiguration *)createKeyboardConfiguration
 {
-    return [[VZUSBKeyboardConfiguration alloc] init];
-}
-
-+ (VZVirtioSoundDeviceConfiguration *)createAudioDeviceConfiguration
-{
-    VZVirtioSoundDeviceConfiguration *audioDeviceConfiguration = [[VZVirtioSoundDeviceConfiguration alloc] init];
-
-    VZVirtioSoundDeviceInputStreamConfiguration *inputStream = [[VZVirtioSoundDeviceInputStreamConfiguration alloc] init];
-    inputStream.source = [[VZHostAudioInputStreamSource alloc] init];
-
-    VZVirtioSoundDeviceOutputStreamConfiguration *outputStream = [[VZVirtioSoundDeviceOutputStreamConfiguration alloc] init];
-    outputStream.sink = [[VZHostAudioOutputStreamSink alloc] init];
-
-    audioDeviceConfiguration.streams = @[ inputStream, outputStream ];
-
-    return audioDeviceConfiguration;
+    if (@available(macOS 14.0, *)) {
+        return [[VZMacKeyboardConfiguration alloc] init];
+    } else {
+        return [[VZUSBKeyboardConfiguration alloc] init];
+    }
 }
 
 @end

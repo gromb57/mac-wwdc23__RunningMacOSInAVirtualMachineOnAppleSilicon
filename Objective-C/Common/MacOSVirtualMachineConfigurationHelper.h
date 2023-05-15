@@ -1,8 +1,8 @@
 /*
-See LICENSE folder for this sample’s licensing information.
+See the LICENSE.txt file for this sample’s licensing information.
 
 Abstract:
-Helper that creates various configuration objects exposed in the `VZVirtualMachineConfiguration`.
+The helper that creates various configuration objects exposed in the `VZVirtualMachineConfiguration`.
 */
 
 #ifndef MacOSVirtualMachineConfigurationHelper_h
@@ -29,11 +29,9 @@ Helper that creates various configuration objects exposed in the `VZVirtualMachi
 
 + (VZVirtioNetworkDeviceConfiguration *)createNetworkDeviceConfiguration;
 
-+ (VZUSBScreenCoordinatePointingDeviceConfiguration *)createPointingDeviceConfiguration;
++ (VZPointingDeviceConfiguration *)createPointingDeviceConfiguration;
 
-+ (VZUSBKeyboardConfiguration *)createKeyboardConfiguration;
-
-+ (VZVirtioSoundDeviceConfiguration *)createAudioDeviceConfiguration;
++ (VZKeyboardConfiguration *)createKeyboardConfiguration;
 
 @end
 

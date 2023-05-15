@@ -1,8 +1,8 @@
 /*
-See LICENSE folder for this sample’s licensing information.
+See the LICENSE.txt file for this sample’s licensing information.
 
 Abstract:
-The application delegate that sets up and starts the virtual machine.
+The app delegate that sets up and starts the virtual machine.
 */
 
 import Cocoa
@@ -18,11 +18,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     private var virtualMachineResponder: MacOSVirtualMachineDelegate?
 
-#if arch(arm64)
     private var virtualMachine: VZVirtualMachine!
 
-    // MARK: Create the Mac Platform Configuration
+    // MARK: Create the Mac platform configuration.
 
+#if arch(arm64)
     private func createMacPlaform() -> VZMacPlatformConfiguration {
         let macPlatform = VZMacPlatformConfiguration()
 
@@ -33,7 +33,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             fatalError("Missing Virtual Machine Bundle at \(vmBundlePath). Run InstallationTool first to create it.")
         }
 
-        // Retrieve the hardware model; you should save this value to disk
+        // Retrieve the hardware model and save this value to disk
         // during installation.
         guard let hardwareModelData = try? Data(contentsOf: hardwareModelURL) else {
             fatalError("Failed to retrieve hardware model data.")
@@ -48,7 +48,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         }
         macPlatform.hardwareModel = hardwareModel
 
-        // Retrieve the machine identifier; you should save this value to disk
+        // Retrieve the machine identifier and save this value to disk
         // during installation.
         guard let machineIdentifierData = try? Data(contentsOf: machineIdentifierURL) else {
             fatalError("Failed to retrieve machine identifier data.")
@@ -62,7 +62,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         return macPlatform
     }
 
-    // MARK: Create the Virtual Machine Configuration and instantiate the Virtual Machine
+    // MARK: Create the virtual machine configuration and instantiate the virtual machine.
 
     private func createVirtualMachine() {
         let virtualMachineConfiguration = VZVirtualMachineConfiguration()
@@ -76,15 +76,49 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         virtualMachineConfiguration.networkDevices = [MacOSVirtualMachineConfigurationHelper.createNetworkDeviceConfiguration()]
         virtualMachineConfiguration.pointingDevices = [MacOSVirtualMachineConfigurationHelper.createPointingDeviceConfiguration()]
         virtualMachineConfiguration.keyboards = [MacOSVirtualMachineConfigurationHelper.createKeyboardConfiguration()]
-        virtualMachineConfiguration.audioDevices = [MacOSVirtualMachineConfigurationHelper.createAudioDeviceConfiguration()]
 
         try! virtualMachineConfiguration.validate()
 
+        if #available(macOS 14.0, *) {
+            try! virtualMachineConfiguration.validateSaveRestoreSupport()
+        }
+
         virtualMachine = VZVirtualMachine(configuration: virtualMachineConfiguration)
     }
-#endif
 
-    // MARK: Start the Virtual Machine
+    // MARK: Start or restore the virtual machine.
+
+    func startVirtualMachine() {
+        virtualMachine.start(completionHandler: { (result) in
+            if case let .failure(error) = result {
+                fatalError("Virtual machine failed to start with \(error)")
+            }
+        })
+    }
+
+    func resumeVirtualMachine() {
+        virtualMachine.resume(completionHandler: { (result) in
+            if case let .failure(error) = result {
+                fatalError("Virtual machine failed to resume with \(error)")
+            }
+        })
+    }
+
+    @available(macOS 14.0, *)
+    func restoreVirtualMachine() {
+        virtualMachine.restoreMachineStateFrom(url: saveFileURL, completionHandler: { [self] (error) in
+            // Remove the saved file. Whether success or failure, the state no longer matches the VM's disk.
+            let fileManager = FileManager.default
+            try! fileManager.removeItem(at: saveFileURL)
+
+            if error == nil {
+                self.resumeVirtualMachine()
+            } else {
+                self.startVirtualMachine()
+            }
+        })
+    }
+#endif
 
     func applicationDidFinishLaunching(_ aNotification: Notification) {
 #if arch(arm64)
@@ -93,20 +127,70 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             virtualMachineResponder = MacOSVirtualMachineDelegate()
             virtualMachine.delegate = virtualMachineResponder
             virtualMachineView.virtualMachine = virtualMachine
-            virtualMachine.start(completionHandler: { (result) in
-                switch result {
-                    case let .failure(error):
-                        fatalError("Virtual machine failed to start \(error)")
+            virtualMachineView.capturesSystemKeys = true
 
-                    default:
-                        NSLog("Virtual machine successfully started.")
+            if #available(macOS 14.0, *) {
+                // Configure the app to automatically respond to changes in the display size.
+                virtualMachineView.automaticallyReconfiguresDisplay = true
+            }
+
+            if #available(macOS 14.0, *) {
+                let fileManager = FileManager.default
+                if fileManager.fileExists(atPath: saveFileURL.path) {
+                    restoreVirtualMachine()
+                } else {
+                    startVirtualMachine()
                 }
-            })
+            } else {
+                startVirtualMachine()
+            }
         }
 #endif
     }
 
+    // MARK: Save the virtual machine when the app exits.
+
     func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
         return true
+    }
+    
+#if arch(arm64)
+    @available(macOS 14.0, *)
+    func saveVirtualMachine(completionHandler: @escaping () -> Void) {
+        virtualMachine.saveMachineStateTo(url: saveFileURL, completionHandler: { (error) in
+            guard error == nil else {
+                fatalError("Virtual machine failed to save with \(error!)")
+            }
+
+            completionHandler()
+        })
+    }
+
+    @available(macOS 14.0, *)
+    func pauseAndSaveVirtualMachine(completionHandler: @escaping () -> Void) {
+        virtualMachine.pause(completionHandler: { (result) in
+            if case let .failure(error) = result {
+                fatalError("Virtual machine failed to pause with \(error)")
+            }
+
+            self.saveVirtualMachine(completionHandler: completionHandler)
+        })
+    }
+#endif
+
+    func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
+#if arch(arm64)
+        if #available(macOS 14.0, *) {
+            if virtualMachine.state == .running {
+                pauseAndSaveVirtualMachine(completionHandler: {
+                    sender.reply(toApplicationShouldTerminate: true)
+                })
+                
+                return .terminateLater
+            }
+        }
+#endif
+
+        return .terminateNow
     }
 }

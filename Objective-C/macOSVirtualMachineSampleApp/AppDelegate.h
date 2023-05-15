@@ -1,8 +1,8 @@
 /*
-See LICENSE folder for this sample’s licensing information.
+See the LICENSE.txt file for this sample’s licensing information.
 
 Abstract:
-The application delegate that sets up and starts the virtual machine.
+The app delegate that sets up and starts the virtual machine.
 */
 
 #import <Cocoa/Cocoa.h>

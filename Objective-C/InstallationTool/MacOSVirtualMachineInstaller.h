@@ -1,8 +1,8 @@
 /*
-See LICENSE folder for this sample’s licensing information.
+See the LICENSE.txt file for this sample’s licensing information.
 
 Abstract:
-Helper class to install a macOS virtual machine.
+The helper class to install a macOS virtual machine.
 */
 
 #ifndef MacOSVirtualMachineInstaller_h

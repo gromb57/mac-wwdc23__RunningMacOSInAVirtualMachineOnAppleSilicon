@@ -33,6 +33,8 @@
 		8FDABC65270D20F600D7FC60 /* MacOSVirtualMachineInstaller.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FDABC62270D20F600D7FC60 /* MacOSVirtualMachineInstaller.m */; };
 		8FDABC66270D212F00D7FC60 /* MacOSVirtualMachineConfigurationHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FDABC4F270D1F0300D7FC60 /* MacOSVirtualMachineConfigurationHelper.m */; };
 		8FDABC67270D213200D7FC60 /* MacOSVirtualMachineDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FDABC50270D1F0300D7FC60 /* MacOSVirtualMachineDelegate.m */; };
+		FCDA60BA2A04826200872072 /* Virtualization.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F87D54626C3427C000EADA4 /* Virtualization.framework */; };
+		FCDA60BB2A04826B00872072 /* Virtualization.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F87D54626C3427C000EADA4 /* Virtualization.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -57,7 +59,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		8F87D51D26C34111000EADA4 /* macOSVirtualMachineSampleApp-Swift.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "macOSVirtualMachineSampleApp-Swift.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		8F87D51D26C34111000EADA4 /* macOSVirtualMachineSampleApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = macOSVirtualMachineSampleApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8F87D52026C34111000EADA4 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		8F87D52226C34111000EADA4 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		8F87D52526C34111000EADA4 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
@@ -73,7 +75,7 @@
 		8F87D54D26C344C4000EADA4 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		8FB90BE826D422FD00988F51 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8FB90BED26D5AC8100988F51 /* MacOSRestoreImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacOSRestoreImage.swift; sourceTree = "<group>"; };
-		8FDABC3A270D1DC600D7FC60 /* macOSVirtualMachineSampleApp-Objective-C.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "macOSVirtualMachineSampleApp-Objective-C.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		8FDABC3A270D1DC600D7FC60 /* macOSVirtualMachineSampleApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = macOSVirtualMachineSampleApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8FDABC3C270D1DC600D7FC60 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		8FDABC3D270D1DC600D7FC60 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		8FDABC3F270D1DC600D7FC60 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -117,6 +119,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FCDA60BA2A04826200872072 /* Virtualization.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -124,6 +127,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FCDA60BB2A04826B00872072 /* Virtualization.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -165,9 +169,9 @@
 		8F87D51E26C34111000EADA4 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				8F87D51D26C34111000EADA4 /* macOSVirtualMachineSampleApp-Swift.app */,
+				8F87D51D26C34111000EADA4 /* macOSVirtualMachineSampleApp.app */,
 				8F87D53126C341AC000EADA4 /* InstallationTool-Swift */,
-				8FDABC3A270D1DC600D7FC60 /* macOSVirtualMachineSampleApp-Objective-C.app */,
+				8FDABC3A270D1DC600D7FC60 /* macOSVirtualMachineSampleApp.app */,
 				8FDABC59270D1FFE00D7FC60 /* InstallationTool-Objective-C */,
 			);
 			name = Products;
@@ -287,7 +291,7 @@
 			);
 			name = "macOSVirtualMachineSampleApp-Swift";
 			productName = macOSVirtualMachineSampleApp;
-			productReference = 8F87D51D26C34111000EADA4 /* macOSVirtualMachineSampleApp-Swift.app */;
+			productReference = 8F87D51D26C34111000EADA4 /* macOSVirtualMachineSampleApp.app */;
 			productType = "com.apple.product-type.application";
 		};
 		8F87D53026C341AC000EADA4 /* InstallationTool-Swift */ = {
@@ -321,7 +325,7 @@
 			);
 			name = "macOSVirtualMachineSampleApp-Objective-C";
 			productName = "macOSVirtualMachineSampleApp-Objective-C";
-			productReference = 8FDABC3A270D1DC600D7FC60 /* macOSVirtualMachineSampleApp-Objective-C.app */;
+			productReference = 8FDABC3A270D1DC600D7FC60 /* macOSVirtualMachineSampleApp.app */;
 			productType = "com.apple.product-type.application";
 		};
 		8FDABC58270D1FFE00D7FC60 /* InstallationTool-Objective-C */ = {
@@ -620,9 +624,10 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.example.apple-samplecode.macOSVirtualMachineSampleApp${SAMPLE_CODE_DISAMBIGUATOR}.macOSVirtualMachineSampleApp";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = macOSVirtualMachineSampleApp;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -652,9 +657,10 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.example.apple-samplecode.macOSVirtualMachineSampleApp${SAMPLE_CODE_DISAMBIGUATOR}.macOSVirtualMachineSampleApp";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = macOSVirtualMachineSampleApp;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -666,9 +672,11 @@
 			baseConfigurationReference = F4E72614B21833A4E0FE3E98 /* SampleCode.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = InstallationTool.entitlements;
+				CODE_SIGN_IDENTITY = "Mac Developer";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = "";
 				ENABLE_USER_SELECTED_FILES = readwrite;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.example.apple-samplecode.macOSVirtualMachineSampleApp${SAMPLE_CODE_DISAMBIGUATOR}.macOSVirtualMachineSampleApp";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -681,9 +689,11 @@
 			baseConfigurationReference = F4E72614B21833A4E0FE3E98 /* SampleCode.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = InstallationTool.entitlements;
+				CODE_SIGN_IDENTITY = "Mac Developer";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = "";
 				ENABLE_USER_SELECTED_FILES = readwrite;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.example.apple-samplecode.macOSVirtualMachineSampleApp${SAMPLE_CODE_DISAMBIGUATOR}.macOSVirtualMachineSampleApp";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -698,6 +708,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = macOSVirtualMachineSampleApp.entitlements;
+				CODE_SIGN_IDENTITY = "Mac Developer";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
@@ -705,17 +716,17 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Objective-C/macOSVirtualMachineSampleApp/Info.plist";
-				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2021 Apple Inc. All rights reserved.";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				INFOPLIST_KEY_NSMainNibFile = MainMenu;
 				INFOPLIST_KEY_NSPrincipalClass = NSApplication;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 12.4;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.example.apple-samplecode.macOSVirtualMachineSampleApp${SAMPLE_CODE_DISAMBIGUATOR}.macOSVirtualMachineSampleApp-Objective-C";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = macOSVirtualMachineSampleApp;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 			};
@@ -728,6 +739,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = macOSVirtualMachineSampleApp.entitlements;
+				CODE_SIGN_IDENTITY = "Mac Developer";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
@@ -735,17 +747,17 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Objective-C/macOSVirtualMachineSampleApp/Info.plist";
-				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2021 Apple Inc. All rights reserved.";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				INFOPLIST_KEY_NSMainNibFile = MainMenu;
 				INFOPLIST_KEY_NSPrincipalClass = NSApplication;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 12.4;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.example.apple-samplecode.macOSVirtualMachineSampleApp${SAMPLE_CODE_DISAMBIGUATOR}.macOSVirtualMachineSampleApp-Objective-C";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = macOSVirtualMachineSampleApp;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 			};
@@ -756,10 +768,11 @@
 			baseConfigurationReference = F4E72614B21833A4E0FE3E98 /* SampleCode.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = InstallationTool.entitlements;
+				CODE_SIGN_IDENTITY = "Mac Developer";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = "";
 				ENABLE_HARDENED_RUNTIME = YES;
-				MACOSX_DEPLOYMENT_TARGET = 12.0;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 			};
@@ -770,10 +783,11 @@
 			baseConfigurationReference = F4E72614B21833A4E0FE3E98 /* SampleCode.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = InstallationTool.entitlements;
+				CODE_SIGN_IDENTITY = "Mac Developer";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = "";
 				ENABLE_HARDENED_RUNTIME = YES;
-				MACOSX_DEPLOYMENT_TARGET = 12.0;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 			};

@@ -1,8 +1,8 @@
 /*
-See LICENSE folder for this sample’s licensing information.
+See the LICENSE.txt file for this sample’s licensing information.
 
 Abstract:
-Entry for `macOSVirtualMachineSampleApp`.
+The entry for `macOSVirtualMachineSampleApp`.
 */
 
 #import <Cocoa/Cocoa.h>

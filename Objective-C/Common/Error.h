@@ -1,8 +1,8 @@
 /*
-See LICENSE folder for this sample’s licensing information.
+See the LICENSE.txt file for this sample’s licensing information.
 
 Abstract:
-Helper function that displays error and aborts the program.
+The helper function that displays errors and aborts the program.
 */
 
 #import <Foundation/Foundation.h>

@@ -1,8 +1,8 @@
 /*
-See LICENSE folder for this sample’s licensing information.
+See the LICENSE.txt file for this sample’s licensing information.
 
 Abstract:
-Helper class to install a macOS virtual machine.
+A helper class to install a macOS virtual machine.
 */
 
 import Virtualization
@@ -14,13 +14,13 @@ class MacOSVirtualMachineInstaller: NSObject {
     private var virtualMachine: VZVirtualMachine!
     private var virtualMachineResponder: MacOSVirtualMachineDelegate?
 
-    // Create a bundle on the user's home directory to store any artifacts
-    // that will be produced by installation.
+    // Create a bundle on the user's Home directory to store any artifacts
+    // that the installation produces.
     public func setUpVirtualMachineArtifacts() {
         createVMBundle()
     }
 
-    // MARK: Install macOS onto the Virtual Machine from IPSW
+    // MARK: Install macOS onto the virtual machine from IPSW.
 
     public func installMacOS(ipswURL: URL) {
         NSLog("Attempting to install from IPSW at \(ipswURL).")
@@ -52,7 +52,7 @@ class MacOSVirtualMachineInstaller: NSObject {
         }
     }
 
-    // MARK: Create the Mac Platform Configuration
+    // MARK: Create the Mac platform configuration.
 
     private func createMacPlatformConfiguration(macOSConfiguration: VZMacOSConfigurationRequirements) -> VZMacPlatformConfiguration {
         let macPlatformConfiguration = VZMacPlatformConfiguration()
@@ -66,7 +66,7 @@ class MacOSVirtualMachineInstaller: NSObject {
         macPlatformConfiguration.hardwareModel = macOSConfiguration.hardwareModel
         macPlatformConfiguration.machineIdentifier = VZMacMachineIdentifier()
 
-        // Store the hardware model and machine identifier to disk so that we
+        // Store the hardware model and machine identifier to disk so that you
         // can retrieve them for subsequent boots.
         try! macPlatformConfiguration.hardwareModel.dataRepresentation.write(to: hardwareModelURL)
         try! macPlatformConfiguration.machineIdentifier.dataRepresentation.write(to: machineIdentifierURL)
@@ -74,7 +74,7 @@ class MacOSVirtualMachineInstaller: NSObject {
         return macPlatformConfiguration
     }
 
-    // MARK: Create the Virtual Machine Configuration and instantiate the Virtual Machine
+    // MARK: Create the virtual machine configuration and instantiate the virtual machine.
 
     private func setupVirtualMachine(macOSConfiguration: VZMacOSConfigurationRequirements) {
         let virtualMachineConfiguration = VZVirtualMachineConfiguration()
@@ -90,7 +90,7 @@ class MacOSVirtualMachineInstaller: NSObject {
             fatalError("memorySize isn't supported by the macOS configuration.")
         }
 
-        // Create a 64 GB disk image.
+        // Create a 128 GB disk image.
         createDiskImage()
 
         virtualMachineConfiguration.bootLoader = MacOSVirtualMachineConfigurationHelper.createBootLoader()
@@ -99,16 +99,19 @@ class MacOSVirtualMachineInstaller: NSObject {
         virtualMachineConfiguration.networkDevices = [MacOSVirtualMachineConfigurationHelper.createNetworkDeviceConfiguration()]
         virtualMachineConfiguration.pointingDevices = [MacOSVirtualMachineConfigurationHelper.createPointingDeviceConfiguration()]
         virtualMachineConfiguration.keyboards = [MacOSVirtualMachineConfigurationHelper.createKeyboardConfiguration()]
-        virtualMachineConfiguration.audioDevices = [MacOSVirtualMachineConfigurationHelper.createAudioDeviceConfiguration()]
 
         try! virtualMachineConfiguration.validate()
+
+        if #available(macOS 14.0, *) {
+            try! virtualMachineConfiguration.validateSaveRestoreSupport()
+        }
 
         virtualMachine = VZVirtualMachine(configuration: virtualMachineConfiguration)
         virtualMachineResponder = MacOSVirtualMachineDelegate()
         virtualMachine.delegate = virtualMachineResponder
     }
 
-    // MARK: Begin macOS installation
+    // MARK: Begin macOS installation.
 
     private func startInstallation(restoreImageURL: URL) {
         let installer = VZMacOSInstaller(virtualMachine: virtualMachine, restoringFromImageAt: restoreImageURL)
@@ -122,7 +125,7 @@ class MacOSVirtualMachineInstaller: NSObject {
             }
         })
 
-        // Observe installation progress
+        // Observe installation progress.
         installationObserver = installer.progress.observe(\.fractionCompleted, options: [.initial, .new]) { (progress, change) in
             NSLog("Installation progress: \(change.newValue! * 100).")
         }
@@ -143,15 +146,15 @@ class MacOSVirtualMachineInstaller: NSObject {
         }
     }
 
-    // Create an empty disk image for the Virtual Machine.
+    // Create an empty disk image for the virtual machine.
     private func createDiskImage() {
-        let diskFd = open(diskImagePath, O_RDWR | O_CREAT, S_IRUSR | S_IWUSR)
+        let diskFd = open(diskImageURL.path, O_RDWR | O_CREAT, S_IRUSR | S_IWUSR)
         if diskFd == -1 {
             fatalError("Cannot create disk image.")
         }
 
-        // 64GB disk space.
-        var result = ftruncate(diskFd, 64 * 1024 * 1024 * 1024)
+        // 128 GB disk space.
+        var result = ftruncate(diskFd, 128 * 1024 * 1024 * 1024)
         if result != 0 {
             fatalError("ftruncate() failed.")
         }

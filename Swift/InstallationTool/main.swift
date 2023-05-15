@@ -1,8 +1,8 @@
 /*
-See LICENSE folder for this sample’s licensing information.
+See the LICENSE.txt file for this sample’s licensing information.
 
 Abstract:
-Entry for `InstallationTool`.
+The entry for `InstallationTool`.
 */
 
 import Foundation
@@ -27,7 +27,7 @@ if CommandLine.arguments.count == 2 {
 
     let restoreImage = MacOSRestoreImage()
     restoreImage.download {
-        // Install from the restore image that has been downloaded.
+        // Install from the restore image that you downloaded.
         installer.installMacOS(ipswURL: restoreImageURL)
     }
 

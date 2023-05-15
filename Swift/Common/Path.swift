@@ -1,20 +1,24 @@
 /*
-See LICENSE folder for this sample’s licensing information.
+See the LICENSE.txt file for this sample’s licensing information.
 
 Abstract:
-Constants that point to the various file URLs that are used by this sample code.
+Constants that point to the various file URLs that the sample code uses.
 */
 
 import Foundation
 
 let vmBundlePath = NSHomeDirectory() + "/VM.bundle/"
 
-let diskImagePath = vmBundlePath + "Disk.img"
+let vmBundleURL = URL(fileURLWithPath: vmBundlePath)
 
-let auxiliaryStorageURL = URL(fileURLWithPath: vmBundlePath + "AuxiliaryStorage")
+let auxiliaryStorageURL = vmBundleURL.appendingPathComponent("AuxiliaryStorage")
 
-let machineIdentifierURL = URL(fileURLWithPath: vmBundlePath + "MachineIdentifier")
+let diskImageURL = vmBundleURL.appendingPathComponent("Disk.img")
 
-let hardwareModelURL = URL(fileURLWithPath: vmBundlePath + "HardwareModel")
+let hardwareModelURL = vmBundleURL.appendingPathComponent("HardwareModel")
 
-let restoreImageURL = URL(fileURLWithPath: vmBundlePath + "RestoreImage.ipsw")
+let machineIdentifierURL = vmBundleURL.appendingPathComponent("MachineIdentifier")
+
+let restoreImageURL = vmBundleURL.appendingPathComponent("RestoreImage.ipsw")
+
+let saveFileURL = vmBundleURL.appendingPathComponent("SaveFile.vzvmsave")

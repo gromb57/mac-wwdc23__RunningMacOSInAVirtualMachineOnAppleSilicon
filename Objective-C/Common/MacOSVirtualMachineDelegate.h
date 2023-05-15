@@ -1,8 +1,8 @@
 /*
-See LICENSE folder for this sample’s licensing information.
+See the LICENSE.txt file for this sample’s licensing information.
 
 Abstract:
-A class that conforms to `VZVirtualMachineDelegate` and to track the virtual machine's state.
+A class that conforms to `VZVirtualMachineDelegate` and tracks the virtual machine's state.
 */
 
 #ifndef MacOSVirtualMachineDelegate_h

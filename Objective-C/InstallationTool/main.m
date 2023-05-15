@@ -1,8 +1,8 @@
 /*
-See LICENSE folder for this sample’s licensing information.
+See the LICENSE.txt file for this sample’s licensing information.
 
 Abstract:
-Entry for `InstallationTool`.
+The entry for `InstallationTool`.
 */
 
 #import "Error.h"
@@ -35,7 +35,7 @@ int main(int argc, const char * argv[])
 
             MacOSRestoreImage *restoreImage = [MacOSRestoreImage new];
             [restoreImage download:^{
-                // Install from the restore image that has been downloaded.
+                // Install from the restore image that you downloaded.
                 [installer installMacOS:getRestoreImageURL()];
             }];
 

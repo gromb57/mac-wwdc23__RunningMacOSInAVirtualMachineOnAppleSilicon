@@ -1,8 +1,8 @@
 /*
-See LICENSE folder for this sample’s licensing information.
+See the LICENSE.txt file for this sample’s licensing information.
 
 Abstract:
-The application delegate that sets up and starts the virtual machine.
+The app delegate that sets up and starts the virtual machine.
 */
 
 #import "AppDelegate.h"
@@ -29,7 +29,7 @@ The application delegate that sets up and starts the virtual machine.
 
 #ifdef __arm64__
 
-// MARK: Create the Mac Platform Configuration
+// MARK: Create the Mac platform configuration.
 
 - (VZMacPlatformConfiguration *)createMacPlatformConfiguration
 {
@@ -41,8 +41,7 @@ The application delegate that sets up and starts the virtual machine.
         abortWithErrorMessage([NSString stringWithFormat:@"Missing Virtual Machine Bundle at %@. Run InstallationTool first to create it.", getVMBundlePath()]);
     }
 
-    // Retrieve the hardware model; you should save this value to disk
-    // during installation.
+    // Retrieve the hardware model and save this value to disk during installation.
     NSData *hardwareModelData = [[NSData alloc] initWithContentsOfURL:getHardwareModelURL()];
     if (!hardwareModelData) {
         abortWithErrorMessage(@"Failed to retrieve hardware model data.");
@@ -58,7 +57,7 @@ The application delegate that sets up and starts the virtual machine.
     }
     macPlatformConfiguration.hardwareModel = hardwareModel;
 
-    // Retrieve the machine identifier; you should save this value to disk
+    // Retrieve the machine identifier and save this value to disk
     // during installation.
     NSData *machineIdentifierData = [[NSData alloc] initWithContentsOfURL:getMachineIdentifierURL()];
     if (!machineIdentifierData) {
@@ -74,7 +73,7 @@ The application delegate that sets up and starts the virtual machine.
     return macPlatformConfiguration;
 }
 
-// MARK: Create the Virtual Machine Configuration and instantiate the Virtual Machine
+// MARK: Create the virtual machine configuration and instantiate the virtual machine.
 
 - (void)createVirtualMachine
 {
@@ -89,15 +88,57 @@ The application delegate that sets up and starts the virtual machine.
     configuration.networkDevices = @[ [MacOSVirtualMachineConfigurationHelper createNetworkDeviceConfiguration] ];
     configuration.pointingDevices = @[ [MacOSVirtualMachineConfigurationHelper createPointingDeviceConfiguration] ];
     configuration.keyboards = @[ [MacOSVirtualMachineConfigurationHelper createKeyboardConfiguration] ];
-    configuration.audioDevices = @[ [MacOSVirtualMachineConfigurationHelper createAudioDeviceConfiguration] ];
-    assert([configuration validateWithError:nil]);
+    
+    BOOL isValidConfiguration = [configuration validateWithError:nil];
+    if (!isValidConfiguration) {
+        @throw [NSException exceptionWithName:NSInternalInconsistencyException reason:@"Invalid configuration" userInfo:nil];
+    }
+    
+    if (@available(macOS 14.0, *)) {
+        BOOL supportsSaveRestore = [configuration validateSaveRestoreSupportWithError:nil];
+        if (!supportsSaveRestore) {
+            @throw [NSException exceptionWithName:NSInternalInconsistencyException reason:@"Invalid configuration" userInfo:nil];
+        }
+    }
 
     _virtualMachine = [[VZVirtualMachine alloc] initWithConfiguration:configuration];
 }
 
-#endif
+// MARK: Start or restore the virtual machine.
 
-// MARK: Start the Virtual Machine
+- (void)startVirtualMachine
+{
+    [_virtualMachine startWithCompletionHandler:^(NSError * _Nullable error) {
+        if (error) {
+            abortWithErrorMessage([NSString stringWithFormat:@"%@%@", @"Virtual machine failed to start with ", error.localizedDescription]);
+        }
+    }];
+}
+
+- (void)resumeVirtualMachine
+{
+    [_virtualMachine resumeWithCompletionHandler:^(NSError * _Nullable error) {
+        if (error) {
+            abortWithErrorMessage([NSString stringWithFormat:@"%@%@", @"Virtual machine failed to resume with ", error.localizedDescription]);
+        }
+    }];
+}
+
+- (void)restoreVirtualMachine API_AVAILABLE(macosx(14.0));
+{
+    [_virtualMachine restoreMachineStateFromURL:getSaveFileURL() completionHandler:^(NSError * _Nullable error) {
+        // Remove the saved file. Whether success or failure, the state no longer matches the VM's disk.
+        NSFileManager *fileManager = [NSFileManager defaultManager];
+        [fileManager removeItemAtURL:getSaveFileURL() error:nil];
+
+        if (!error) {
+            [self resumeVirtualMachine];
+        } else {
+            [self startVirtualMachine];
+        }
+    }];
+}
+#endif
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
 {
@@ -108,19 +149,73 @@ The application delegate that sets up and starts the virtual machine.
         self->_delegate = [MacOSVirtualMachineDelegate new];
         self->_virtualMachine.delegate = self->_delegate;
         self->_virtualMachineView.virtualMachine = self->_virtualMachine;
+        self->_virtualMachineView.capturesSystemKeys = YES;
 
-        [self->_virtualMachine startWithCompletionHandler:^(NSError * _Nullable error) {
-            if (error) {
-                abortWithErrorMessage(error.localizedDescription);
+        if (@available(macOS 14.0, *)) {
+            // Configure the app to automatically respond to changes in the display size.
+            self->_virtualMachineView.automaticallyReconfiguresDisplay = YES;
+        }
+
+        if (@available(macOS 14.0, *)) {
+            NSFileManager *fileManager = [NSFileManager defaultManager];
+            if ([fileManager fileExistsAtPath:getSaveFileURL().path]) {
+                [self restoreVirtualMachine];
+            } else {
+                [self startVirtualMachine];
             }
-        }];
+        } else {
+            [self startVirtualMachine];
+        }
     });
 #endif
 }
 
+// MARK: Save the virtual machine when the app exits.
+
 - (BOOL)applicationShouldTerminateAfterLastWindowClosed:(NSApplication *)sender
 {
     return YES;
+}
+
+#ifdef __arm64__
+- (void)saveVirtualMachine:(void (^)(void))completionHandler API_AVAILABLE(macosx(14.0));
+{
+    [_virtualMachine saveMachineStateToURL:getSaveFileURL() completionHandler:^(NSError * _Nullable error) {
+        if (error) {
+            abortWithErrorMessage([NSString stringWithFormat:@"%@%@", @"Virtual machine failed to save with ", error.localizedDescription]);
+        }
+        
+        completionHandler();
+    }];
+}
+
+- (void)pauseAndSaveVirtualMachine:(void (^)(void))completionHandler API_AVAILABLE(macosx(14.0));
+{
+    [_virtualMachine pauseWithCompletionHandler:^(NSError * _Nullable error) {
+        if (error) {
+            abortWithErrorMessage([NSString stringWithFormat:@"%@%@", @"Virtual machine failed to pause with ", error.localizedDescription]);
+        }
+
+        [self saveVirtualMachine:completionHandler];
+    }];
+}
+#endif
+
+- (NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication *)sender;
+{
+#ifdef __arm64__
+    if (@available(macOS 14.0, *)) {
+        if (_virtualMachine.state == VZVirtualMachineStateRunning) {
+            [self pauseAndSaveVirtualMachine:^(void) {
+                [sender replyToApplicationShouldTerminate:YES];
+            }];
+            
+            return NSTerminateLater;
+        }
+    }
+#endif
+
+    return NSTerminateNow;
 }
 
 @end

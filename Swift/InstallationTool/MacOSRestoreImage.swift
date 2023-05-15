@@ -1,5 +1,5 @@
 /*
-See LICENSE folder for this sample’s licensing information.
+See the LICENSE.txt file for this sample’s licensing information.
 
 Abstract:
 Download the latest macOS restore image from the network.
@@ -13,7 +13,7 @@ import Virtualization
 class MacOSRestoreImage: NSObject {
     private var downloadObserver: NSKeyValueObservation?
 
-    // MARK: Observe the download progress
+    // MARK: Observe the download progress.
 
     public func download(completionHandler: @escaping () -> Void) {
         NSLog("Attempting to download latest available restore image.")
@@ -28,7 +28,7 @@ class MacOSRestoreImage: NSObject {
         }
     }
 
-    // MARK: Download the Restore Image from the network
+    // MARK: Download the restore image from the network.
 
     private func downloadRestoreImage(restoreImage: VZMacOSRestoreImage, completionHandler: @escaping () -> Void) {
         let downloadTask = URLSession.shared.downloadTask(with: restoreImage.url) { localURL, response, error in

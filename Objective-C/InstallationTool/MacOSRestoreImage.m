@@ -1,5 +1,5 @@
 /*
-See LICENSE folder for this sample’s licensing information.
+See the LICENSE.txt file for this sample’s licensing information.
 
 Abstract:
 Download the latest macOS restore image from the network.
@@ -16,7 +16,7 @@ Download the latest macOS restore image from the network.
 
 @implementation MacOSRestoreImage
 
-// MARK: Download the Restore Image from the network
+// MARK: Download the restore image from the network.
 
 - (void)download:(void (^)(void))completionHandler
 {
@@ -44,7 +44,7 @@ Download the latest macOS restore image from the network.
     }];
 }
 
-// MARK: Observe the download progress
+// MARK: Observe the download progress.
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {

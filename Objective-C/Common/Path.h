@@ -1,8 +1,8 @@
 /*
-See LICENSE folder for this sample’s licensing information.
+See the LICENSE.txt file for this sample’s licensing information.
 
 Abstract:
-Helper functions that retrieves the various file URLs that are used by this sample code.
+A helper function to retrieve the various file URLs that this sample code uses.
 */
 
 #ifndef Path_h
@@ -10,39 +10,44 @@ Helper functions that retrieves the various file URLs that are used by this samp
 
 #import <Foundation/Foundation.h>
 
-static inline NSString *getVMBundlePath()
+static inline NSString *getVMBundlePath(void)
 {
     return [NSString stringWithFormat:@"%@%@", NSHomeDirectory(), @"/VM.bundle/"];
 }
 
-static inline NSURL *getVMBundleURL()
+static inline NSURL *getVMBundleURL(void)
 {
     return [[NSURL alloc] initFileURLWithPath:getVMBundlePath()];
 }
 
-static inline NSURL *getAuxiliaryStorageURL()
+static inline NSURL *getAuxiliaryStorageURL(void)
 {
-    return [[NSURL alloc] initFileURLWithPath:[NSString stringWithFormat:@"%@%@", getVMBundlePath(), @"AuxiliaryStorage"]];
+    return [getVMBundleURL() URLByAppendingPathComponent:@"AuxiliaryStorage"];
 }
 
-static inline NSURL *getDiskImageURL()
+static inline NSURL *getDiskImageURL(void)
 {
-    return [[NSURL alloc] initFileURLWithPath:[NSString stringWithFormat:@"%@%@", getVMBundlePath(), @"Disk.img"]];
+    return [getVMBundleURL() URLByAppendingPathComponent:@"Disk.img"];
 }
 
-static inline NSURL *getHardwareModelURL()
+static inline NSURL *getHardwareModelURL(void)
 {
-    return [[NSURL alloc] initFileURLWithPath:[NSString stringWithFormat:@"%@%@", getVMBundlePath(), @"HardwareModel"]];
+    return [getVMBundleURL() URLByAppendingPathComponent:@"HardwareModel"];
 }
 
-static inline NSURL *getMachineIdentifierURL()
+static inline NSURL *getMachineIdentifierURL(void)
 {
-    return [[NSURL alloc] initFileURLWithPath:[NSString stringWithFormat:@"%@%@", getVMBundlePath(), @"MachineIdentifier"]];
+    return [getVMBundleURL() URLByAppendingPathComponent:@"MachineIdentifier"];
 }
 
-static inline NSURL *getRestoreImageURL()
+static inline NSURL *getRestoreImageURL(void)
 {
-    return [[NSURL alloc] initFileURLWithPath:[NSString stringWithFormat:@"%@%@", getVMBundlePath(), @"RestoreImage.ipsw"]];
+    return [getVMBundleURL() URLByAppendingPathComponent:@"RestoreImage.ipsw"];
+}
+
+static inline NSURL *getSaveFileURL(void)
+{
+    return [getVMBundleURL() URLByAppendingPathComponent:@"SaveFile.vzvmsave"];
 }
 
 #endif /* Path_h */

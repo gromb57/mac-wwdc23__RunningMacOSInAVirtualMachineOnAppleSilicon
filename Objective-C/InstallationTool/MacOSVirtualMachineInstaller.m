@@ -1,8 +1,8 @@
 /*
-See LICENSE folder for this sample’s licensing information.
+See the LICENSE.txt file for this sample’s licensing information.
 
 Abstract:
-Helper class to install a macOS virtual machine.
+The helper class to install a macOS virtual machine.
 */
 
 #ifdef __arm64__
@@ -25,7 +25,7 @@ Helper class to install a macOS virtual machine.
 
 // MARK: - Internal helper methods.
 
-static void createVMBundle()
+static void createVMBundle(void)
 {
     int fd = mkdir([getVMBundleURL() fileSystemRepresentation], S_IRWXU | S_IRWXG | S_IRWXO);
     if (fd == -1) {
@@ -41,16 +41,16 @@ static void createVMBundle()
     }
 }
 
-// Create an empty disk image for the Virtual Machine
-static void createDiskImage()
+// Create an empty disk image for the virtual machine.
+static void createDiskImage(void)
 {
     int fd = open([getDiskImageURL() fileSystemRepresentation], O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
     if (fd == -1) {
         abortWithErrorMessage(@"Cannot create disk image.");
     }
 
-    // 64G disk space.
-    int result = ftruncate(fd, 64ull * 1024ull * 1024ull * 1024ull);
+    // 128 GB disk space.
+    int result = ftruncate(fd, 128ull * 1024ull * 1024ull * 1024ull);
     if (result) {
         abortWithErrorMessage(@"ftruncate() failed.");
     }
@@ -61,7 +61,7 @@ static void createDiskImage()
     }
 }
 
-// MARK: Create the Mac Platform Configuration
+// MARK: Create the Mac platform configuration.
 
 - (VZMacPlatformConfiguration *)createMacPlatformConfiguration:(VZMacOSConfigurationRequirements *)macOSConfiguration
 {
@@ -80,14 +80,14 @@ static void createDiskImage()
     macPlatformConfiguration.auxiliaryStorage = auxiliaryStorage;
     macPlatformConfiguration.machineIdentifier = [[VZMacMachineIdentifier alloc] init];
 
-    // Store the hardware model and machine identifier to disk so that we can retrieve them for subsequent boots.
+    // Store the hardware model and machine identifier to disk so that you can retrieve them for subsequent boots.
     [macPlatformConfiguration.hardwareModel.dataRepresentation writeToURL:getHardwareModelURL() atomically:YES];
     [macPlatformConfiguration.machineIdentifier.dataRepresentation writeToURL:getMachineIdentifierURL() atomically:YES];
 
     return macPlatformConfiguration;
 }
 
-// MARK: Create the Virtual Machine Configuration and instantiate the Virtual Machine
+// MARK: Create the virtual machine configuration and instantiate the virtual machine.
 
 - (void)setupVirtualMachineWithMacOSConfigurationRequirements:(VZMacOSConfigurationRequirements *)macOSConfiguration
 {
@@ -106,7 +106,7 @@ static void createDiskImage()
         abortWithErrorMessage(@"memorySize is not supported by the macOS configuration.");
     }
 
-    // Create a 64 GB disk image.
+    // Create a 128 GB disk image.
     createDiskImage();
 
     configuration.bootLoader = [MacOSVirtualMachineConfigurationHelper createBootLoader];
@@ -115,8 +115,18 @@ static void createDiskImage()
     configuration.networkDevices = @[ [MacOSVirtualMachineConfigurationHelper createNetworkDeviceConfiguration] ];
     configuration.pointingDevices = @[ [MacOSVirtualMachineConfigurationHelper createPointingDeviceConfiguration] ];
     configuration.keyboards = @[ [MacOSVirtualMachineConfigurationHelper createKeyboardConfiguration] ];
-    configuration.audioDevices = @[ [MacOSVirtualMachineConfigurationHelper createAudioDeviceConfiguration] ];
-    assert([configuration validateWithError:nil]);
+    
+    BOOL isValidConfiguration = [configuration validateWithError:nil];
+    if (!isValidConfiguration) {
+        @throw [NSException exceptionWithName:NSInternalInconsistencyException reason:@"Invalid configuration" userInfo:nil];
+    }
+    
+    if (@available(macOS 14.0, *)) {
+        BOOL supportsSaveRestore = [configuration validateSaveRestoreSupportWithError:nil];
+        if (!supportsSaveRestore) {
+            @throw [NSException exceptionWithName:NSInternalInconsistencyException reason:@"Invalid configuration" userInfo:nil];
+        }
+    }
 
     self->_virtualMachine = [[VZVirtualMachine alloc] initWithConfiguration:configuration];
     self->_delegate = [MacOSVirtualMachineDelegate new];
@@ -154,13 +164,13 @@ static void createDiskImage()
 // MARK: - Public methods.
 
 // Create a bundle on the user's Home directory to store any artifacts that
-// will be produced by installation.
+// the installation produces.
 - (void)setUpVirtualMachineArtifacts
 {
     createVMBundle();
 }
 
-// MARK: Begin macOS installation
+// MARK: Begin macOS installation.
 
 - (void)installMacOS:(NSURL *)ipswURL
 {
