@@ -23,8 +23,8 @@ There are four build targets in this project that represent the `InstallationToo
 [property_hardwareModel]:https://developer.apple.com/documentation/virtualization/vzmacosconfigurationrequirements/3816066-hardwaremodel
 [property_machineIdentifier]:https://developer.apple.com/documentation/virtualization/vzmacplatformconfiguration/3816084-machineidentifier
 [method_start]:https://developer.apple.com/documentation/virtualization/vzvirtualmachine/3656826-start
-[method_save]:
-[method_restore]:
+[method_save]:https://developer.apple.com/documentation/virtualization/vzvirtualmachine/4168516-savemachinestatetourl
+[method_restore]:https://developer.apple.com/documentation/virtualization/vzvirtualmachine/4168515-restoremachinestatefromurl
 [method_pause]:https://developer.apple.com/documentation/virtualization/vzvirtualmachine/3656824-pause
 [method_resume]:https://developer.apple.com/documentation/virtualization/vzvirtualmachine/3656825-resume
 [method_guestDidStop]:https://developer.apple.com/documentation/virtualization/vzvirtualmachinedelegate/3656730-guestdidstop
@@ -149,7 +149,7 @@ if (@available(macOS 14.0, *)) {
 _virtualMachine = [[VZVirtualMachine alloc] initWithConfiguration:configuration];
 ```
 
-Inside the `VMconfiguration` method, the app also creates a platform configuration for the VM. [`VZMacPlatformConfiguration`][class_VZMacPlatformConfiguration] configures important macOS-specific data that the macOS guest needs to run, including the specific [`hardwareModel`][property_hardwareModel] that the image supports, as well as a [`machineIdentifier`][property_machineIdentifier] that uniquely identifies the current VM instance and differentiates it from any others.
+Inside the `createVirtualMachine` method, the app also creates a platform configuration for the VM. [`VZMacPlatformConfiguration`][class_VZMacPlatformConfiguration] configures important macOS-specific data that the macOS guest needs to run, including the specific [`hardwareModel`][property_hardwareModel] that the image supports, as well as a [`machineIdentifier`][property_machineIdentifier] that uniquely identifies the current VM instance and differentiates it from any others.
 
 ``` swift
 let macPlatform = VZMacPlatformConfiguration()
@@ -229,7 +229,7 @@ if (!machineIdentifier) {
 macPlatformConfiguration.machineIdentifier = machineIdentifier;
 ```
 
-After creating the platform configuration, the app creates a [`virtualMachineConfiguration`] and adds video, virtual drives, and other devices to the system.
+After creating the platform configuration, the app creates an instance of  [`VZVirtualMachineConfiguration`][class_VZVirtualMachineConfiguration] and adds video, virtual drives, and other devices to the system.
 
 ``` swift
 let virtualMachineConfiguration = VZVirtualMachineConfiguration()
